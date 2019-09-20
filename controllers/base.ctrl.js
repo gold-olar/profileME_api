@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
+  
+
+
 
 let jwtSecret = process.env.JWTSECRET;
 
@@ -9,7 +12,7 @@ class BaseController {
     constructor(){
     }
     /**
-     * Generic send success helper
+     * send success 
      * @param res
      * @param data
      * @param message
@@ -36,7 +39,7 @@ class BaseController {
     }
 
     /**
-     * Generic send error helper
+     *  send error 
      * @param res
      * @param message
      * @param error
@@ -78,7 +81,21 @@ class BaseController {
         });
     }
 
-  
+    // async imageUploader(image) {
+    //     const options = { folder: 'profileME' };
+    //     cloudinary.v2.uploader.upload(image, options, (err, result) => {
+    //         if (err) {
+    //             throw err;
+    //         }
+
+           
+    //         return result.url;
+    //     });
+    // }
 }
+
+
+
+
 
 module.exports = BaseController

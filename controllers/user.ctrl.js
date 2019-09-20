@@ -1,6 +1,16 @@
 
 const User = require('../models/User');
 const BaseController = require('./base.ctrl');
+const cloudinary = require('cloudinary');
+
+
+cloudinary.config({ 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET 
+});
+const Cloudinary_options = { folder: 'profileME' };
+
 
 
 class UserController extends BaseController {
@@ -55,20 +65,27 @@ class UserController extends BaseController {
 
 
     async addUserDetails(req, res) {
-       const { username } = req.user;
-       const {introduction, whatYouDo, facebook, twitter, github, linkedin, 
-              image, behance, dribble      } = req.body;
-        try {
+        const { username } = req.user;
+        const {introduction, whatYouDo, facebook, twitter, github, linkedin, 
+            image, behance, dribble      } = req.body;
+            try {
          const UserProfile = await User.findOne({username});
          if(!UserProfile){
             return super.sendError(res, null, 'Details upload failed because User was not found.', 400);
          }
-         
+         const imageUrl = await  cloudinary.v2.uploader.upload(image, Cloudinary_options, (err, result) => {
+             if (err) {
+                 throw err;
+             }
+             return result.url;
+         });
+
+
          UserProfile.introduction = introduction;
          UserProfile.whatYouDo = whatYouDo;
          UserProfile.facebook = facebook;
          UserProfile.twitter = twitter;
-         UserProfile.image = image;
+         UserProfile.image = imageUrl.url;
          UserProfile.behance = behance;
          UserProfile.github = github;
          UserProfile.dribble = dribble;
@@ -84,8 +101,6 @@ class UserController extends BaseController {
     }
 
     async getUserByUsername(req, res) {
-        console.log('567890-');
-        
         const username = req.params.username;
         try {
             const user = await User.findOne({ username });

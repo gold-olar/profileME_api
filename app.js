@@ -6,7 +6,6 @@ const path = require('path');
 const mongoose = require('mongoose');
 const db = require('./config/database');
 const cors = require('cors');
-
 require('dotenv').config();
 
 
@@ -21,7 +20,7 @@ const apiRouter = require('./routes/api');
 
 const app = express();
 
-// app.use(cors);
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
