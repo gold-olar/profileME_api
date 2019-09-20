@@ -23,7 +23,7 @@ const userSchema = new Schema({
     },
     image: {
         type: String,
-        default: 'jhyvuy'
+        default: 'https://images.app.goo.gl/i6HqgJNTVX9W7LtD7'
     },
     facebook: {
         type: String,
