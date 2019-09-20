@@ -75,7 +75,7 @@ class UserController extends BaseController {
          }
          const imageUrl = await  cloudinary.v2.uploader.upload(image, Cloudinary_options, (err, result) => {
              if (err) {
-                 throw err;
+                return super.sendError(res, null, 'There was a problem with the image', 400);
              }
              return result.url;
          });

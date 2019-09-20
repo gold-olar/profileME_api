@@ -1,6 +1,6 @@
 if(process.env.NODE_ENV  === 'production'){
 	module.exports ={
-		mongoURL:''
+		mongoURL:'mongodb://profileme:profileme1@ds353957.mlab.com:53957/profileme'
  
 	}
 }else{
