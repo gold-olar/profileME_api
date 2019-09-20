@@ -15,6 +15,12 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    firstName:{
+        type: String,
+    },
+    lastname : {
+        type: String,
+    },
     introduction:{
         type: String,
     },

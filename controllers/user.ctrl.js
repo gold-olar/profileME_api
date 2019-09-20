@@ -67,7 +67,7 @@ class UserController extends BaseController {
     async addUserDetails(req, res) {
         const { username } = req.user;
         const {introduction, whatYouDo, facebook, twitter, github, linkedin, 
-            image, behance, dribble      } = req.body;
+            image, behance, dribble , firstName, lastName     } = req.body;
             try {
          const UserProfile = await User.findOne({username});
          if(!UserProfile){
@@ -80,7 +80,8 @@ class UserController extends BaseController {
              return result.url;
          });
 
-
+         UserProfile.firstName = firstName;
+         UserProfile.lastName = lastName;
          UserProfile.introduction = introduction;
          UserProfile.whatYouDo = whatYouDo;
          UserProfile.facebook = facebook;
