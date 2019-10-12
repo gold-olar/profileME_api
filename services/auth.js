@@ -10,6 +10,7 @@ class AuthController extends BaseController {
     }
 
       async authenticateUser(req, res, next) {
+        console.log('O de bi')
         try {
             if (!req.headers || !req.headers.token ) {
                 return super.sendError(res, null, 'You do not have access to this resource', 401);

@@ -18,7 +18,7 @@ const userSchema = new Schema({
     firstName:{
         type: String,
     },
-    lastname : {
+    lastName : {
         type: String,
     },
     introduction:{
@@ -29,7 +29,7 @@ const userSchema = new Schema({
     },
     image: {
         type: String,
-        default: 'https://images.app.goo.gl/i6HqgJNTVX9W7LtD7'
+        default: 'https://res.cloudinary.com/goldolar/image/upload/v1570075131/user.png'
     },
     facebook: {
         type: String,

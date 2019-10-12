@@ -5,7 +5,8 @@ const router = Router();
 /* GET index page. */
 router.get('/', (req, res) => {
   res.json({
-    title: 'Express'
+    title: 'PROFILE ME',
+    documentation: "To be announced later..."
   });
 });
 

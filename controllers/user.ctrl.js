@@ -2,6 +2,7 @@
 const User = require('../models/User');
 const BaseController = require('./base.ctrl');
 const cloudinary = require('cloudinary');
+const bcrypt = require('bcryptjs');
 
 
 cloudinary.config({ 
@@ -25,9 +26,9 @@ class UserController extends BaseController {
             const existingUser = await User.findOne({ username });
             const existingEmail = await User.findOne({ email });
             if (existingEmail)
-                return super.sendError(res, null, 'A user with this email already exists', 400);
+                return super.sendError(res, null, 'A user with this email already exists', 200, 403);
             if (existingUser)
-                return super.sendError(res, null, 'A user already exists with the same username', 400);
+                return super.sendError(res, null, 'A user already exists with the same username', 200, 403);
 
             const userParams = { username, email, password };
             const newUser = new User(userParams);
@@ -47,18 +48,25 @@ class UserController extends BaseController {
             const { email, password } = req.body;
             let userInDb = await User.findOne({ email });
             if (userInDb) {
-                const isPasswordCorrect = super.comparePassword(password, userInDb.password);
-                if (!isPasswordCorrect) {
-                    return super.sendError(res, null, 'Incorrect  password', 400);
-                }
-                let tokenData = { userId: userInDb._id, username: userInDb.username };
-                const token = super.generateToken(tokenData);
-                userInDb = { token, user: userInDb }
-                return super.sendSuccess(res, userInDb);
+                bcrypt.compare(password, userInDb.password, (err, isMatch) => {
+                    if (isMatch) {
+                        let tokenData = { userId: userInDb._id, username: userInDb.username };
+                        const token = super.generateToken(tokenData);
+                        userInDb = { token, user: userInDb }
+                        return super.sendSuccess(res, userInDb);
+                        // console.log('o de bi')
+                    }else{  
+                        return super.sendError(res, null, 'Incorrect  password', 200, 400);
+                        
+                    }
+                });
+            }else{
+            return super.sendError(res, null, 'Email not found, Please register first. ',200, 400);
             }
 
-            return super.sendError(res, null, 'Email not found, Please register first. ', 400);
         } catch (err) {
+            // console.log('o catch')
+
             return super.sendError(res, err, err.message, err.status);
         }
     }
@@ -69,16 +77,21 @@ class UserController extends BaseController {
         const {introduction, whatYouDo, facebook, twitter, github, linkedin, 
             image, behance, dribble , firstName, lastName     } = req.body;
             try {
-         const UserProfile = await User.findOne({username});
+                const UserProfile = await User.findOne({username});
          if(!UserProfile){
             return super.sendError(res, null, 'Details upload failed because User was not found.', 400);
          }
-         const imageUrl = await  cloudinary.v2.uploader.upload(image, Cloudinary_options, (err, result) => {
+        if(image){
+             await  cloudinary.v2.uploader.upload(image, Cloudinary_options, (err, result) => {
              if (err) {
                 return super.sendError(res, null, 'There was a problem with the image', 400);
+             } else {
+                UserProfile.image = result.url;
              }
-             return result.url;
+             // return result.url;
          });
+        }
+
 
          UserProfile.firstName = firstName;
          UserProfile.lastName = lastName;
@@ -86,13 +99,13 @@ class UserController extends BaseController {
          UserProfile.whatYouDo = whatYouDo;
          UserProfile.facebook = facebook;
          UserProfile.twitter = twitter;
-         UserProfile.image = imageUrl.url;
          UserProfile.behance = behance;
          UserProfile.github = github;
          UserProfile.dribble = dribble;
          UserProfile.linkedin = linkedin;
          
          await UserProfile.save();
+         
 
 
            return super.sendSuccess(res, UserProfile, "Updated Successfully.", 200); 

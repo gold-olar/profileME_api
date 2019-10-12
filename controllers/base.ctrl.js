@@ -45,7 +45,7 @@ class BaseController {
      * @param error
      * @param status
      */
-    sendError(res, error, message, status) {
+    sendError(res, error, message, status, HttpStatus) {
         let resp = { status: false };
         resp.message = message ? message : 'An error has occurred, please try again';
 
@@ -53,7 +53,7 @@ class BaseController {
             resp.error = error.stack;
 
         status = status ? status : 500;
-        resp.HttpStatus = status; 
+        resp.HttpStatus = HttpStatus; 
 
         return res.status(status).json(resp);
     }
